@@ -1,0 +1,94 @@
+Index: code.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/code.py b/code.py
+new file mode 100644
+--- /dev/null	(date 1770918548353)
++++ b/code.py	(date 1770918548353)
+@@ -0,0 +1,10 @@
++import argparse
++
++parser = argparse.ArgumentParser(description='Process some integers.')
++parser.add_argument('pflicht_int', help="Integer der erforderlich ist", type=int)
++parser.add_argument('--optional_int', help="Optionaler Integer", type=int)
++args = parser.parse_args()
++
++print("Integer der erforderlich ist: ", args.pflicht_int, "- Typ:", type(args.pflicht_int))
++print("Optional Integer: ", args.optional_int)
++print('end')
+\ No newline at end of file
+Index: example_code.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/example_code.py b/example_code.py
+new file mode 100644
+--- /dev/null	(date 1770918164309)
++++ b/example_code.py	(date 1770918164309)
+@@ -0,0 +1,19 @@
++zahlen = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
++for zahl in zahlen:
++    print(zahl)
++
++for i in range(1, 6):
++    print(i)
++
++count = 0
++while count < 6:
++    print(count)
++    count += 1
++
++for i in range(1, 10):
++    print(i)
++
++n = 10
++while n > 0:
++    print(n)
++    n -= 1
+\ No newline at end of file
+Index: script.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#!/usr/bin/env python3\n\nimport argparse\n\nparser = argparse.ArgumentParser(description=\"Beispiel für argparse\")\nparser.add_argument(\"pflicht_int\", help=\"Integer der erforderlich ist\", type=int)\nparser.add_argument(\"--optional_int\", help=\"Optionaler Integer\", type=int)\nparser.add_argument(\"--optional_str\", help=\"Optionaler String\")\nparser.add_argument(\"--wahl\", help=\"Meine Wahl\", choices=[\"a\", \"b\", \"c\", \"d\"])\nargs = parser.parse_args()\n\nprint(\"Integer:\", args.pflicht_int, \"- Typ:\", type(args.pflicht_int))\nprint(\"Optional Integer:\", args.optional_int)\nprint(\"Optional String:\", args.optional_str, \"- Type:\", type(args.optional_str))\nprint(\"Wahl:\", args.wahl)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/script.py b/script.py
+--- a/script.py	(revision e965a62bd08e4d0224511b78b929cd8b50175ce7)
++++ b/script.py	(date 1770918164273)
+@@ -1,15 +1,20 @@
+ #!/usr/bin/env python3
+ 
+-import argparse
++# Aufgabe: Programmieren Sie einen einfachen Taschenrechner
++
++# Ihr Taschenrechner soll folgende Funktionen unterstützen:
++# - Addition (+)
++# - Subtraktion (-)
++# - Multiplikation (*)
++# - Division (/)
+ 
+-parser = argparse.ArgumentParser(description="Beispiel für argparse")
+-parser.add_argument("pflicht_int", help="Integer der erforderlich ist", type=int)
+-parser.add_argument("--optional_int", help="Optionaler Integer", type=int)
+-parser.add_argument("--optional_str", help="Optionaler String")
+-parser.add_argument("--wahl", help="Meine Wahl", choices=["a", "b", "c", "d"])
+-args = parser.parse_args()
++# Der Benutzer sollte aufgefordert werden, zwei Zahlen einzugeben.
++# Anschließend sollte der Benutzer die gewünschte Operation wählen können.
+ 
+-print("Integer:", args.pflicht_int, "- Typ:", type(args.pflicht_int))
+-print("Optional Integer:", args.optional_int)
+-print("Optional String:", args.optional_str, "- Type:", type(args.optional_str))
+-print("Wahl:", args.wahl)
+\ No newline at end of file
++# Beispielablauf:
++# 1. Benutzer gibt die erste Zahl ein.
++# 2. Benutzer gibt die zweite Zahl ein.
++# 3. Benutzer wählt die Operation (+, -, *, /).
++# 4. Das Programm führt die Berechnung durch und gibt das Ergebnis aus.
++
++# Optional: Erweitern Sie den Taschenrechner um weitere Funktionen wie Potenzierung oder Modulo.
