@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import datetime
+from xxlimited_35 import Null
 
 
 # Aufgabe: Erstellen Sie eine Klasse 'BankAccount', die ein einfaches Bankkonto repräsentiert.
@@ -21,30 +22,39 @@ import datetime
 # - Erstellen Sie eine Methode, die Transaktionen protokolliert und eine Liste von Ein- und Auszahlungen ausgibt.
 
 class BankAccount:
-    account_transactions = []
 
     def __init__(self, owner: str, account_number: str):
         self.owner = owner
         self.account_number = account_number
         self._balance = 0
+        self._transactions = []
         print(f"Account with {self.account_number} created for {self.owner}")
 
     def __str__(self):
-        return f"Account with {self.account_number} belongs to {self.owner} and has a balance of {self._balance:.2f} €"
-
-    @classmethod
-    def log_transaction(cls, account_transaction: dict, trans_direction: str = "deposit"):
-        cls.account_transactions.append(account_transaction)
-        for acc_trans in cls.account_transactions:
-            acc_trans_str = f"{acc_trans['timestamp']} | "
-            if trans_direction == "deposit":
-                acc_trans_str += f"Deposit {acc_trans['amount']} € | "
-            else:
-                acc_trans_str += f"Withdraw {acc_trans['amount']} € | "
-            acc_trans_str += f"Balance: {acc_trans['balance']} €"
-            print(acc_trans_str)
+        return f"Account with {self.account_number}"
 
 
+    def log_transaction(self, account_transaction: dict):
+        self._transactions.append(account_transaction)
+
+    def transactions_print(self):
+        acc_transactions_string = f"""
+-----------------------------------------------------------------------------
+Accounttransactions of Account-Nr.: {self.account_number}
+Account-Owner: {self.owner}
+"""
+
+        for acc_trans in self._transactions:
+            try:
+                if acc_trans['account'] != Null and acc_trans['direction'] == 'receive':
+                    acc_transactions_string += f"Date: {acc_trans['timestamp']} | {acc_trans['direction']} from {acc_trans['account']} | Amount: {acc_trans['amount']} € | Balance: {acc_trans['balance']} € |  \n"
+                elif acc_trans['account'] and acc_trans["direction"] == 'transfer':
+                    acc_transactions_string += f"Date: {acc_trans['timestamp']} | {acc_trans['direction']} to {acc_trans['account']} | Amount: {acc_trans['amount']} € | Balance: {acc_trans['balance']} € | \n"
+            except KeyError:
+                acc_transactions_string += f"Date: {acc_trans['timestamp']} | {acc_trans['direction']} | Amount: {acc_trans['amount']} € | Balance: {acc_trans['balance']} € |  \n"
+        acc_transactions_string += f"============================================================================="
+
+        print(acc_transactions_string)
 
     def deposit(self, amount: float):
         self.set_balance(amount)
@@ -63,15 +73,40 @@ class BankAccount:
     def set_balance(self, amount: float):
         self._balance += amount
 
-    def set_log_transaction_list(self,amount: float, trans_direction: str = "deposit"):
+    def transfer(self, amount: float, target_account: BankAccount):
+        if self.get_balance() >= amount:
+            self.set_balance(-amount)
+            target_account.receive(amount, self)
+            self.set_log_transaction_list(amount, "transfer", target_account)
+
+    def receive(self, amount: float, source_account: BankAccount):
+        self.set_balance(amount)
+        self.set_log_transaction_list(amount, "receive", source_account)
+
+
+    def set_log_transaction_list(self,amount: float, trans_direction: str = "deposit", account: BankAccount = None):
         if trans_direction == "deposit":
             self.log_transaction({"timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                                   "balance": self.get_balance(),
-                                  "amount": amount})
-        else:
+                                  "amount": amount,
+                                  "direction": trans_direction,})
+        elif trans_direction == "withdraw":
             self.log_transaction({"timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                                   "balance": self.get_balance(),
-                                  "amount": amount}, "withdraw")
+                                  "amount": amount,
+                                  "direction": trans_direction,})
+        elif trans_direction == "transfer":
+            self.log_transaction({"timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                                  "balance": self.get_balance(),
+                                  "amount": amount,
+                                  "direction": trans_direction,
+                                  "account": account})
+        elif trans_direction == "receive":
+            self.log_transaction({"timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                                  "balance": self.get_balance(),
+                                  "amount": amount,
+                                  "direction": trans_direction,
+                                  "account": account})
 
 
 k1 = BankAccount("Gion Desax", "99348489")
@@ -83,3 +118,15 @@ k1.deposit(100)
 print(k1)
 k1.withdraw(500)
 print(k1)
+k2 = BankAccount("Patrizia Desax", "22394995")
+k2.deposit(1000)
+k2.transfer(200, k1)
+k1.transactions_print()
+k2.transactions_print()
+k1.deposit(10000)
+k1.transfer(200, k2)
+k2.transactions_print()
+k1.transactions_print()
+k2.withdraw(500)
+k1.transfer(1000,k2)
+k2.transactions_print()
